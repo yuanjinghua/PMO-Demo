@@ -6,7 +6,7 @@ from astropy import units as u
 from astropy.io import fits, ascii
 import astropy.coordinates as coords
 
-mpl.rc("font", family="RomanC", size=10)
+mpl.rc("font", family="serif", size=12)
 mpl.rc("axes", linewidth = 1.0)
 mpl.rc("lines", linewidth = 1.0)
 mpl.rc("xtick.major", pad = 5, width = 1)
