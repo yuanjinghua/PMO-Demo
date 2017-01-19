@@ -1,0 +1,65 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! This script was written to average multi-observations
+!!!! of one source.
+!!!! Originally by Jinghua Yuan
+!!!! Version 0: 2013-09-22
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set format long
+set plot h
+set font du
+set unit v v
+pen /wei 2
+set coor user
+set align v
+set ang min
+
+define char souname*13 pmodir*20
+define integer firstline lastline
+
+let firstline =
+let lastline =
+let pmodir = ../PMO_raw
+for l firstline to lastline
+	accept souname /column ../sourList.txt /line l
+	sic dele 'pmodir'/'souname'U.ave
+	file in 'pmodir'/'souname'_U.com
+	file out 'pmodir'/'souname'U.ave s
+	for i -20 to 20 by 0.5
+		for j -20 to 20 by 0.5
+			find /range 'i'-0.25 'i'+0.25 'j'-0.25 'j'+0.25
+			if found.gt.0 then
+				average /noc /res
+				!modify offset i j
+				write
+			endif
+		next
+	next
+	
+	sic dele 'pmodir'/'souname'L.ave
+	file in 'pmodir'/'souname'_L.com
+	file out 'pmodir'/'souname'L.ave s
+	for i -20 to 20 by 0.5
+		for j -20 to 20 by 0.5
+			find /range 'i'-0.25 'i'+0.25 'j'-0.25 'j'+0.25
+			if found.gt.0 then
+				average /noc /res
+				!modify offset i j
+				write
+			endif
+		next
+	next
+
+	sic dele 'pmodir'/'souname'L2.ave
+	file in 'pmodir'/'souname'L.ave
+	file out 'pmodir'/'souname'L2.ave s
+	find
+	for i 1 to found
+		get n
+		modify line C18O(1-0)
+		modify frequency 109782.173
+		write
+	next
+
+next
+exit

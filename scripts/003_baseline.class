@@ -1,0 +1,133 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! This script was written to do the following procedures of data
+!!!! collected with the PMO 13.7-m telescope.
+!!!!	1. One-order polynomial fitting to the baseline.
+!!!!    2. Substraction of the baseline.
+!!!!    3. Extract interested part of each spectrum to 
+!!!!	    reduce the size of the data
+!!!!    4. Get plots of mapping grids and averaged spectra of each source.
+!!!!
+!!!! Originally Tie Liu
+!!!! Modified by Jinghua Yuan
+!!!! History versions:.......
+!!!! Version 1: 2013-09-22
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+set format long
+set plot h
+set font du
+set unit v v
+pen /wei 2
+set coor user
+set align v
+set ang min
+
+define char souname*13 pmodir*20 epsdir*20
+define integer firstline lastline
+
+let firstline =
+let lastline =
+let pmodir = ../PMO_raw
+let epsdir = ../epsDir
+for l firstline to lastline
+	accept souname /column ../sourList.txt /line l
+	file in 'pmodir'/'souname'U.ave
+	find /sou 'souname' /range -0.5 0.5 -0.5 0.5
+	get f
+	set mod x -100 100
+	set mod y total
+	plot
+	say "please set windows"
+	set win 
+	base 1
+	plot
+	sic dele 'epsdir'/'souname'_coSpec0.eps
+	hard 'epsdir'/'souname'_coSpec0.eps 
+	sic dele 'pmodir'/'souname'_12co.bas
+	file out 'pmodir'/'souname'_12co.bas s
+	find /sou 'souname' /line 12CO*
+	for i 1 to found
+		get i
+		base 1
+		extract -100 100
+		write
+	next
+
+	file in 'pmodir'/'souname'L.ave
+	sic dele 'pmodir'/'souname'_13co.bas
+	file out 'pmodir'/'souname'_13co.bas s
+	find /sou 'souname' 
+	for i 1 to found
+		get i
+		base 1
+		extract -100 100
+		let ry ry/0.48 ! mark this line to reduce data after Oct. 2011
+		write
+	next
+
+	file in 'pmodir'/'souname'L2.ave
+	sic dele 'pmodir'/'souname'_c18o.bas
+	file out 'pmodir'/'souname'_c18o.bas s
+	find /sou 'souname' 
+	for i 1 to found
+		get i
+		base 1
+		extract -100 100
+		let ry ry/0.48 ! mark this line to reduce data after Oct. 2011
+		write
+	next
+
+	file in 'pmodir'/'souname'_12co.bas
+	find /range -0.5 0.5 -0.5 0.5
+	get f
+	plot
+	set mod x
+	set mod y
+	find /range -5 5 -5 5
+	clear
+	map match /grid
+	sic dele 'epsdir'/'souname'_12co_mapGrid.eps
+	hard 'epsdir'/'souname'_12co_mapGrid.eps
+	clear
+	average match /noc /res
+	set mode y t
+	plot
+	sic dele 'epsdir'/'souname'_12coSpec_ave.eps
+	hard 'epsdir'/'souname'_12coSpec_ave.eps
+
+	file in 'pmodir'/'souname'_13co.bas
+	find /range -0.5 0.5 -0.5 0.5
+	get f
+	plot
+	set mod y
+	find /range -5 5 -5 5
+	clear
+	map match /grid
+	sic dele 'epsdir'/'souname'_13co_mapGrid.eps
+	hard 'epsdir'/'souname'_13co_mapGrid.eps
+	clear
+	average /noc /res
+	set mode y t
+	plot
+	sic dele 'epsdir'/'souname'_13coSpec_ave.eps
+	hard 'epsdir'/'souname'_13coSpec_ave.eps
+
+	file in 'pmodir'/'souname'_c18o.bas
+	find /range -0.5 0.5 -0.5 0.5
+	get f
+	plot
+	set mod y
+	find /range -5 5 -5 5
+	clear
+	map match /grid
+	sic dele 'epsdir'/'souname'_c18o_mapGrid.eps
+	hard 'epsdir'/'souname'_c18o_mapGrid.eps
+	clear
+	average /noc /res
+	set mode y t
+	plot
+	sic dele 'epsdir'/'souname'_c18oSpec_ave.eps
+	hard 'epsdir'/'souname'_c18oSpec_ave.eps
+next
+exit

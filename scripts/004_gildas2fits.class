@@ -1,0 +1,83 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! This script was written to convert the GILDAS formats to fits.
+!!!! 
+!!!! Originally by Tie Liu
+!!!! Modified by Jinghua Yuan
+!!!! History version: .......
+!!!! Version 1: 2013-09-22
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set font du
+set form l
+set plo h
+set ang mi
+
+
+define char souname*13  pmodir*20 fitsdir*20
+define integer firstline lastline
+define real xmin xmax
+
+
+let firstline =
+let lastline =
+let pmodir = ../PMO_raw
+let fitsdir = ../fitsDir
+for l firstline to lastline
+	
+	accept souname /column ../sourList.txt /line l l 
+	set box 2 3 2 3
+	file in 'pmodir'/'souname'_12co.bas
+	set ang mi
+	find /range -0.5 0.5 -0.5 0.5
+	get f
+	set mod x t
+	set mod y total
+	plot
+	set mod x 
+	find /range -5 5 -5 5
+	aver /noc /res
+	plot
+	find  
+	let map%beam 52
+	sic dele co*                                
+	table co new /range 'USER_XMIN' 'USER_XMAX' v   
+	xy_map co 
+	!go view
+	sic dele 'fitsdir'/'souname'_co_cube.fits
+	vector\fits 'fitsdir'/'souname'_co_cube.fits from co.lmv /bits -32
+	clear
+
+	sic dele co*
+
+	
+	
+	file in 'pmodir'/'souname'_13co.bas
+	find 
+	list  
+	let map%beam 52
+	sic dele f13co*                                
+	table f13co new /range 'USER_XMIN' 'USER_XMAX' v   
+	xy_map f13co 
+	!go view
+	sic dele 'fitsdir'/'souname'_13co_cube.fits
+	vector\fits 'fitsdir'/'souname'_13co_cube.fits from f13co.lmv /bits -32
+	clear
+	
+	sic dele f13co*
+	
+	file in 'pmodir'/'souname'_c18o.bas
+	find 
+	list  
+	let map%beam 52
+	sic dele c18o*                                
+	table c18o new /range 'USER_XMIN' 'USER_XMAX' v   
+	xy_map c18o 
+	!go view
+	sic dele 'fitsdir'/'souname'_c18o_cube.fits
+	vector\fits 'fitsdir'/'souname'_c18o_cube.fits from c18o.lmv /bits -32
+	clear
+
+	sic dele c18o*
+	
+next l
+exit

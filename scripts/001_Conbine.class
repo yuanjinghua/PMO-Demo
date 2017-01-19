@@ -1,0 +1,44 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! This script was written to combine multi-observations of one
+!!!! source together.
+!!!! Originaly by Jinghua Yuan
+!!!! Version 0: 2013-09-22
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!! config the environment of CLASS
+set format long
+set plot h
+set font du
+set unit v v
+pen /wei 2
+set coor user
+set align v
+
+
+define char souname*13 date*8 comname*39
+define integer firstline lastline
+
+let firstline =
+let lastline =
+for l firstline to lastline
+	accept souname date /column ../obsList.txt /line l l
+	let comname = ../PMO_raw/'souname'_U.com
+	if file(comname) then
+		file out 'comname'
+	else
+		file out 'comname' s
+	endif
+	file in ../PMO_raw/'souname'_'date'U.bur
+	find
+	copy
+	let comname = ../PMO_raw/'souname'_L.com
+	if file(comname) then
+		file out 'comname'
+	else
+		file out 'comname' s
+	endif
+	file in ../PMO_raw/'souname'_'date'L.bur
+	find
+	copy
+next
+exit
