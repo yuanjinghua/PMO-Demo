@@ -128,7 +128,7 @@ for isour in range(len(sourList)):
 		Tex = m0_co.hdu.copy()
 		Tex.header['BUNIT'] = 'K'
 		Peak_co = np.max(slabCO.hdu.data, axis=0)
-		Tex.data = 5.53/np.log10(5.532/(Peak_co+0.819)+1)
+		Tex.data = 5.53/np.log(5.532/(Peak_co+0.819)+1)
 
 		Nh2 = m0_13co.hdu.copy()
 		Nh2.header['BUNIT'] = 'cm^-2'
